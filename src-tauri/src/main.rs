@@ -37,7 +37,16 @@ fn main() {
             )?;
 
             // Build tray icon
+            let icon = app
+                .default_window_icon()
+                .cloned()
+                .unwrap_or_else(|| {
+                    tauri::image::Image::from_bytes(include_bytes!("../icons/32x32.png"))
+                        .expect("failed to load tray icon fallback")
+                });
+
             let _tray = TrayIconBuilder::new()
+                .icon(icon)
                 .menu(&tray_menu)
                 .show_menu_on_left_click(false)
                 .on_menu_event(|app, event| match event.id().as_ref() {
