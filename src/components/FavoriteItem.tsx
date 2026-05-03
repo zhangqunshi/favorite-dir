@@ -58,12 +58,12 @@ export default function FavoriteItemComponent({
     <>
       <div
         onContextMenu={handleContextMenu}
-        className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all hover:bg-primary/5 border border-transparent hover:border-primary/10 ${
+        className={`group flex items-center gap-1.5 px-3 py-2.5 rounded-lg cursor-pointer transition-all hover:bg-primary/5 border border-transparent hover:border-primary/10 ${
           !exists ? 'opacity-70' : ''
         }`}
       >
         <div
-          className="cursor-grab active:cursor-grabbing self-stretch flex items-center px-3 -ml-3 rounded-lg hover:bg-primary/5 transition-colors"
+          className="cursor-grab active:cursor-grabbing self-stretch flex items-center px-1.5 -ml-1.5 rounded-lg hover:bg-primary/5 transition-colors"
           onMouseDown={onGripMouseDown}
         >
           <GripVertical className="w-6 h-6 text-text-secondary/40 shrink-0" />
