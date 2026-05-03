@@ -69,13 +69,16 @@ export default function FavoriteItemComponent({
           <GripVertical className="w-6 h-6 text-text-secondary/40 shrink-0" />
         </div>
 
-        {item.type === 'dir' ? (
-          <Folder className={`w-5 h-5 shrink-0 ${exists ? 'text-primary' : 'text-text-secondary'}`} />
-        ) : (
-          <FileText className={`w-5 h-5 shrink-0 ${exists ? 'text-primary' : 'text-text-secondary'}`} />
-        )}
-
-        <div className="flex-1 min-w-0" onClick={() => exists && onOpen(item.path)}>
+        <div
+          className="flex-1 min-w-0 flex items-center gap-2"
+          onClick={() => exists && onOpen(item.path)}
+        >
+          {item.type === 'dir' ? (
+            <Folder className={`w-5 h-5 shrink-0 ${exists ? 'text-primary' : 'text-text-secondary'}`} />
+          ) : (
+            <FileText className={`w-5 h-5 shrink-0 ${exists ? 'text-primary' : 'text-text-secondary'}`} />
+          )}
+          <div className="min-w-0 flex-1">
           {isEditing ? (
             <input
               autoFocus
@@ -104,8 +107,9 @@ export default function FavoriteItemComponent({
           <div className="text-xs text-text-secondary truncate mt-0.5">{item.path}</div>
         </div>
       </div>
+    </div>
 
-      {showMenu && (
+    {showMenu && (
         <div
           className="fixed z-50 bg-surface border border-border rounded-lg shadow-lg py-1 min-w-[140px]"
           style={{ left: menuPos.x, top: menuPos.y }}
