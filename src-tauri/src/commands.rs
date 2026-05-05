@@ -115,14 +115,25 @@ pub fn save_config(state: tauri::State<AppState>, config: AppConfig) -> Result<(
 }
 
 #[tauri::command]
-pub fn hide_main_show_float(app: tauri::AppHandle) -> Result<(), String> {
+pub fn hide_main_show_float(
+    app: tauri::AppHandle,
+    state: tauri::State<AppState>,
+) -> Result<(), String> {
     if let Some(main) = app.get_webview_window("main") {
         let _ = main.hide();
     }
-    if let Some(float) = app.get_webview_window("float") {
-        let _ = float.show();
-        let _ = float.set_focus();
+
+    let config = state.config.lock().map_err(|e| e.to_string())?;
+    let float_enabled = config.float_window_enabled.unwrap_or(true);
+    drop(config);
+
+    if float_enabled {
+        if let Some(float) = app.get_webview_window("float") {
+            let _ = float.show();
+            let _ = float.set_focus();
+        }
     }
+
     Ok(())
 }
 

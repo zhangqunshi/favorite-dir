@@ -4,6 +4,7 @@ import type { AppConfig } from '../types';
 
 const DEFAULT_CONFIG: AppConfig = {
   animal: 'dog',
+  floatWindowEnabled: true,
 };
 
 export function useConfig() {

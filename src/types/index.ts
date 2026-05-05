@@ -10,6 +10,7 @@ export interface FavoriteItem {
 
 export interface AppConfig {
   animal: 'dog' | 'cat' | 'rabbit';
+  floatWindowEnabled?: boolean;
   floatPos?: { x: number; y: number };
   mainWindowSize?: { width: number; height: number };
 }

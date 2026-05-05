@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct FavoriteItem {
     pub id: String,
     pub name: String,
@@ -21,8 +22,11 @@ pub enum ItemType {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct AppConfig {
     pub animal: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub float_window_enabled: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub float_pos: Option<Position>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -62,6 +66,7 @@ impl Default for AppConfig {
     fn default() -> Self {
         Self {
             animal: "dog".to_string(),
+            float_window_enabled: None,
             float_pos: None,
             main_window_size: None,
         }

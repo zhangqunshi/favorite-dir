@@ -57,32 +57,57 @@ export default function SettingsModal({ isOpen, onClose, config, onSave }: Props
           </button>
         </div>
 
-        <div className="px-5 py-4">
-          <label className="text-sm font-medium text-text mb-3 block">
-            选择悬浮图标
-          </label>
-          <div className="flex flex-col gap-2">
-            {animals.map((animal) => (
-              <button
-                key={animal.key}
-                onClick={() => onSave({ animal: animal.key })}
-                className={`flex items-center gap-4 px-4 py-3 rounded-xl border-2 transition-all text-left ${
-                  config.animal === animal.key
-                    ? 'border-primary bg-primary/5'
-                    : 'border-transparent hover:bg-border/50'
-                }`}
-              >
-                <AnimalIcon animal={animal.key} size={48} />
-                <div>
-                  <div className="text-sm font-medium text-text">
-                    {animal.label}
+        <div className="px-5 py-4 space-y-5">
+          <div>
+            <label className="text-sm font-medium text-text mb-3 block">
+              选择悬浮图标
+            </label>
+            <div className="flex flex-col gap-2">
+              {animals.map((animal) => (
+                <button
+                  key={animal.key}
+                  onClick={() => onSave({ animal: animal.key })}
+                  className={`flex items-center gap-4 px-4 py-3 rounded-xl border-2 transition-all text-left ${
+                    config.animal === animal.key
+                      ? 'border-primary bg-primary/5'
+                      : 'border-transparent hover:bg-border/50'
+                  }`}
+                >
+                  <AnimalIcon animal={animal.key} size={48} />
+                  <div>
+                    <div className="text-sm font-medium text-text">
+                      {animal.label}
+                    </div>
+                    <div className="text-xs text-text-secondary mt-0.5">
+                      {animal.desc}
+                    </div>
                   </div>
-                  <div className="text-xs text-text-secondary mt-0.5">
-                    {animal.desc}
-                  </div>
-                </div>
-              </button>
-            ))}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-text mb-3 block">
+              悬浮图标
+            </label>
+            <label className="flex items-center justify-between cursor-pointer">
+              <span className="text-sm text-text-secondary">
+                最小化后显示悬浮图标
+              </span>
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={config.floatWindowEnabled !== false}
+                  onChange={(e) =>
+                    onSave({ floatWindowEnabled: e.target.checked })
+                  }
+                />
+                <div className="w-11 h-6 bg-border peer-checked:bg-primary rounded-full transition-colors" />
+                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5" />
+              </div>
+            </label>
           </div>
         </div>
 
