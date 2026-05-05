@@ -96,6 +96,8 @@ fn main() {
             commands::set_float_position,
             commands::save_float_position,
             commands::debug_log,
+            commands::export_favorites,
+            commands::import_favorites,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

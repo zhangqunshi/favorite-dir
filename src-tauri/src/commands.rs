@@ -197,6 +197,37 @@ pub fn save_float_position(
 }
 
 #[tauri::command]
+pub fn export_favorites(state: tauri::State<AppState>, path: String) -> Result<(), String> {
+    let favorites = state.favorites.lock().map_err(|e| e.to_string())?;
+    let json = serde_json::to_string_pretty(&*favorites).map_err(|e| e.to_string())?;
+    drop(favorites);
+    std::fs::write(&path, json).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub fn import_favorites(state: tauri::State<AppState>, path: String) -> Result<Vec<FavoriteItem>, String> {
+    let content = std::fs::read_to_string(&path).map_err(|e| e.to_string())?;
+    let imported: Vec<FavoriteItem> = serde_json::from_str(&content).map_err(|e| e.to_string())?;
+
+    let mut favorites = state.favorites.lock().map_err(|e| e.to_string())?;
+    let mut next_order = favorites.iter().map(|f| f.order).max().unwrap_or(-1) + 1;
+
+    for mut item in imported {
+        if !favorites.iter().any(|f| f.path == item.path) {
+            item.id = uuid::Uuid::new_v4().to_string();
+            item.order = next_order;
+            next_order += 1;
+            favorites.push(item);
+        }
+    }
+
+    let result = favorites.clone();
+    drop(favorites);
+    state.save_favorites()?;
+    Ok(result)
+}
+
+#[tauri::command]
 pub fn debug_log(message: String) {
     use std::io::Write;
     if let Ok(home) = std::env::var("HOME") {

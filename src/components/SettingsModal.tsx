@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
-import { X } from 'lucide-react';
+import { X, Upload, Download } from 'lucide-react';
+import { invoke } from '@tauri-apps/api/core';
+import { open, save } from '@tauri-apps/plugin-dialog';
 import AnimalIcon from './AnimalIcon';
 import type { AppConfig } from '../types';
 
@@ -8,6 +10,7 @@ interface Props {
   onClose: () => void;
   config: AppConfig;
   onSave: (config: Partial<AppConfig>) => void;
+  onImport?: () => void;
 }
 
 const animals: { key: AppConfig['animal']; label: string; desc: string }[] = [
@@ -16,7 +19,7 @@ const animals: { key: AppConfig['animal']; label: string; desc: string }[] = [
   { key: 'rabbit', label: '兔子', desc: '软萌活泼的兔子' },
 ];
 
-export default function SettingsModal({ isOpen, onClose, config, onSave }: Props) {
+export default function SettingsModal({ isOpen, onClose, config, onSave, onImport }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,6 +41,34 @@ export default function SettingsModal({ isOpen, onClose, config, onSave }: Props
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [isOpen, onClose]);
+
+  const handleExport = async () => {
+    try {
+      const path = await save({
+        filters: [{ name: 'JSON', extensions: ['json'] }],
+        defaultPath: 'favorites-backup.json',
+      });
+      if (path) {
+        await invoke('export_favorites', { path });
+      }
+    } catch (e) {
+      console.error('Export failed:', e);
+    }
+  };
+
+  const handleImport = async () => {
+    try {
+      const path = await open({
+        filters: [{ name: 'JSON', extensions: ['json'] }],
+      });
+      if (path && typeof path === 'string') {
+        await invoke('import_favorites', { path });
+        onImport?.();
+      }
+    } catch (e) {
+      console.error('Import failed:', e);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -108,6 +139,28 @@ export default function SettingsModal({ isOpen, onClose, config, onSave }: Props
                 <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5" />
               </div>
             </label>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-text mb-3 block">
+              数据管理
+            </label>
+            <div className="flex gap-3">
+              <button
+                onClick={handleExport}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border hover:bg-border/50 transition-colors text-sm text-text"
+              >
+                <Download className="w-4 h-4" />
+                导出数据
+              </button>
+              <button
+                onClick={handleImport}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border hover:bg-border/50 transition-colors text-sm text-text"
+              >
+                <Upload className="w-4 h-4" />
+                导入数据
+              </button>
+            </div>
           </div>
         </div>
 

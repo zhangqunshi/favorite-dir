@@ -7,7 +7,7 @@ import { useConfig } from './hooks/useConfig';
 
 export default function App() {
   const [showSettings, setShowSettings] = useState(false);
-  const { items, addFavorite, removeFavorite, updateFavorite, reorderItems, openPath, checkExists } = useFavorites();
+  const { items, addFavorite, removeFavorite, updateFavorite, reorderItems, openPath, checkExists, refresh } = useFavorites();
   const { config, setConfig } = useConfig();
 
   const handleClose = useCallback(async () => {
@@ -36,6 +36,7 @@ export default function App() {
         onClose={() => setShowSettings(false)}
         config={config}
         onSave={setConfig}
+        onImport={refresh}
       />
     </div>
   );
