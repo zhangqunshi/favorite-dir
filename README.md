@@ -51,7 +51,18 @@ npm run tauri dev
 npm run tauri build
 ```
 
-构建完成后，可执行文件位于 `src-tauri/target/release/favorite-dir.exe`（Windows）或 `.app`  bundle（macOS）。
+> **注意**：如果遇到 `cargo: command not found` 错误，说明 Rust 工具链未在 PATH 中，请运行：
+> ```bash
+> export PATH="$HOME/.cargo/bin:$PATH" && npm run tauri build
+> ```
+> 或将其加入 shell 配置文件（`~/.zshrc` / `~/.bashrc`）永久生效：
+> ```bash
+> echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.zshrc
+> ```
+
+构建完成后，可执行文件位于：
+- **macOS**: `src-tauri/target/release/bundle/dmg/常用目录_1.0.0_aarch64.dmg` 和 `src-tauri/target/release/bundle/macos/常用目录.app`
+- **Windows**: `src-tauri/target/release/favorite-dir.exe`
 
 ## 项目结构
 
@@ -69,7 +80,8 @@ npm run tauri build
 │   ├── hooks/
 │   │   ├── useFavorites.ts     # 收藏数据管理
 │   │   └── useConfig.ts        # 配置管理
-│   ├── types.ts                # TypeScript 类型定义
+│   ├── types/
+│   │   └── index.ts            # TypeScript 类型定义
 │   ├── main.tsx                # 主窗口入口
 │   └── float.tsx               # 浮动窗口入口
 ├── src-tauri/

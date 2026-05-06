@@ -1,6 +1,21 @@
 import React, { useState, useCallback } from 'react';
-import { Folder, FileText, Pin, GripVertical, Trash2, AlertTriangle, Pencil } from 'lucide-react';
+import { Folder, FileText, Pin, GripVertical, Trash2, AlertTriangle, Pencil, MoreHorizontal } from 'lucide-react';
 import type { FavoriteItem as FavoriteItemType } from '../types';
+
+/** 计算菜单位置，确保不超出窗口边界 */
+function fitMenuPos(x: number, y: number) {
+  const MENU_WIDTH = 148;  // min-w-[140px] + padding + border
+  const MENU_HEIGHT = 120; // approx: 3 items ~32px + divider + padding
+  const MARGIN = 8;
+
+  const maxX = window.innerWidth - MENU_WIDTH - MARGIN;
+  const maxY = window.innerHeight - MENU_HEIGHT - MARGIN;
+
+  return {
+    x: x > maxX ? maxX : x,
+    y: y > maxY ? y - MENU_HEIGHT - MARGIN : y,
+  };
+}
 
 interface Props {
   item: FavoriteItemType;
@@ -30,10 +45,23 @@ export default function FavoriteItemComponent({
     e.preventDefault();
     // Close all other context menus first
     document.dispatchEvent(new CustomEvent('close-context-menu'));
-    setMenuPos({ x: e.clientX, y: e.clientY });
+    setMenuPos(fitMenuPos(e.clientX, e.clientY));
     setShowMenu(true);
   }, []);
 
+
+  const handleMenuButtonClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    document.dispatchEvent(new CustomEvent('close-context-menu'));
+    setMenuPos(fitMenuPos(rect.left, rect.bottom));
+    setShowMenu(true);
+  }, []);
+
+  const handlePinClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    onTogglePin(item);
+  }, [item, onTogglePin]);
 
   const handleRename = useCallback(() => {
     if (editName.trim() && editName !== item.name) {
@@ -106,6 +134,23 @@ export default function FavoriteItemComponent({
           )}
           <div className="text-xs text-text-secondary truncate mt-0.5">{item.path}</div>
         </div>
+      </div>
+
+      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          onClick={handlePinClick}
+          className="p-1 rounded-lg hover:bg-primary/10 transition-colors"
+          title={item.pinned ? '取消置顶' : '置顶'}
+        >
+          <Pin className={`w-4 h-4 ${item.pinned ? 'text-warning fill-warning' : 'text-text-secondary'}`} />
+        </button>
+        <button
+          onClick={handleMenuButtonClick}
+          className="p-1 rounded-lg hover:bg-primary/10 transition-colors"
+          title="更多操作"
+        >
+          <MoreHorizontal className="w-4 h-4 text-text-secondary" />
+        </button>
       </div>
     </div>
 
